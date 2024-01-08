@@ -51,85 +51,85 @@ async function run() {
 
     // get all data users  and registrations
     app.get('/allData', async (req, res) => {
-    const registrationsData = await registrationsCollection.find().toArray();
-    const usersData = await usersCollection.find().toArray();
-    res.send({registrationsData, usersData});
+      const registrationsData = await registrationsCollection.find().toArray();
+      const usersData = await usersCollection.find().toArray();
+      res.send({ registrationsData, usersData });
     });
 
 
     //   user status approved
     app.patch('/user/approved/:id', async (req, res) => {
-        const id = req.params.id;
-        console.log(id);
-        const filter = { _id: new ObjectId(id) };
-        const updateDoc = {
-            $set: {
-                status: 'approved'
-            },
-        };
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: 'approved'
+        },
+      };
 
-        const result = await usersCollection.updateOne(filter, updateDoc);
-        res.send(result);
-      })
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
 
 
     //  registration status approved
     app.patch('/registration/approved/:id', async (req, res) => {
-        const id = req.params.id;
-        console.log(id);
-        const filter = { _id: new ObjectId(id) };
-        const updateDoc = {
-            $set: {
-                registrationStatus: 'approved'
-            },
-        };
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          registrationStatus: 'approved'
+        },
+      };
 
-        const result = await registrationsCollection.updateOne(filter, updateDoc);
-        res.send(result);
-      })
+      const result = await registrationsCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
 
 
 
     // get one data users  and registrations
     app.get('/auth/:email', async (req, res) => {
-        const email = req.params.email;
-        if (!email) {
-          res.send([])
-        }
-        const myRegistrationsData = await registrationsCollection.find({ userEmail: email }).toArray();
-        const myUserData = await usersCollection.find({ userEmail: email }).toArray();
-        res.send({myRegistrationsData, myUserData})
-      });
+      const email = req.params.email;
+      if (!email) {
+        res.send([])
+      }
+      const myRegistrationsData = await registrationsCollection.find({ userEmail: email }).toArray();
+      const myUserData = await usersCollection.find({ userEmail: email }).toArray();
+      res.send({ myRegistrationsData, myUserData })
+    });
 
 
     // get one data users  and registrations
     app.get('/user/:email', async (req, res) => {
-        const email = req.params.email;
-        if (!email) {
-          res.send([])
-        }
-        const myRegistrationsData = await registrationsCollection.find({ userEmail: email }).toArray();
-        const myUserData = await usersCollection.find({ userEmail: email }).toArray();
-        res.send({myRegistrationsData, myUserData})
+      const email = req.params.email;
+      if (!email) {
+        res.send([])
+      }
+      const myRegistrationsData = await registrationsCollection.find({ userEmail: email }).toArray();
+      const myUserData = await usersCollection.find({ userEmail: email }).toArray();
+      res.send({ myRegistrationsData, myUserData })
     });
 
     // put (update) users Status data
-    app.put('/user/:email', async(req, res)=>{
-        const email = req.params.email;
-        if (!email) {
-          res.send([])
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      if (!email) {
+        res.send([])
+      }
+      const userStatus = req.body;
+      console.log(userStatus);
+      const filter = { userEmail: email };
+      const options = { upsert: true };
+      const updateStatus = {
+        $set: {
+          status: userStatus.status,
         }
-        const userStatus = req.body;
-        console.log(userStatus);
-        const filter = { userEmail: email };
-        const options = { upsert: true };
-        const updateStatus ={
-            $set:{
-                status: userStatus.status,
-            }
-        };
-        const result = await usersCollection.updateOne(filter,updateStatus,options);
-        res.send(result)
+      };
+      const result = await usersCollection.updateOne(filter, updateStatus, options);
+      res.send(result)
     });
 
 
@@ -145,10 +145,10 @@ async function run() {
 
     // admins data post
     app.post('/admins', async (req, res) => {
-        const registrationInfo = req.body;
-        const result = await adminsCollection.insertOne(registrationInfo);
-        res.send(result)
-      });
+      const registrationInfo = req.body;
+      const result = await adminsCollection.insertOne(registrationInfo);
+      res.send(result)
+    });
 
 
 
@@ -179,21 +179,21 @@ async function run() {
     });
 
     // put (update) Registrations Status data
-    app.put('/registration/:email', async(req, res)=>{
-        const email = req.params.email;
-        if (!email) {
-            res.send([])
+    app.put('/registration/:email', async (req, res) => {
+      const email = req.params.email;
+      if (!email) {
+        res.send([])
+      }
+      const statusRegistration = req.body;
+      const filter = { userEmail: email };
+      const options = { upsert: true };
+      const updateStatus = {
+        $set: {
+          registrationStatus: statusRegistration.registrationStatus,
         }
-        const statusRegistration = req.body;
-        const filter = { userEmail: email };
-        const options = { upsert: true };
-        const updateStatus ={
-            $set:{
-                registrationStatus: statusRegistration.registrationStatus,
-            }
-        };
-        const result = await registrationsCollection.updateOne(filter,updateStatus,options);
-        res.send(result)
+      };
+      const result = await registrationsCollection.updateOne(filter, updateStatus, options);
+      res.send(result)
     });
 
 
@@ -201,7 +201,7 @@ async function run() {
     app.get('/qrCode/:userId', async (req, res) => {
       try {
         const userId = req.params.userId;
-        const user = await usersCollection.findOne({_id: new ObjectId(userId)});
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
         if (!user) {
           return res.status(404).json({ message: 'User not found' });
@@ -218,103 +218,6 @@ async function run() {
       }
     });
 
-    //admin role check
-     // check role admin or instructor with jwt
-  //    app.get('/users/admin/:email', async (req, res) => {
-  //     const email = req.params.email;
-  //     const query = { email: email }
-  //     const user = await usersCollection.findOne(query);
-  //     const result = { admin: user?.role === 'admin' }
-  //     res.send(result);
-  // })
-
-
-    // // get users one data from mongodb database
-    // app.get('/users/:id', async(req, res)=>{
-    //     const id = req.params.id;
-    //     const filter = {_id: new ObjectId(id)}
-    //     const result = await usersCollection.findOne(filter)
-    //     res.send(result)
-    // })
-
-
-    // // get users all data from mongodb database
-    // app.get('/registrations', async(req, res)=>{
-    //     const cursor = registrationsCollection.find();
-    //     const result = await cursor.toArray()
-    //     res.send(result)
-    // });
-
-
-
-
-
-    // get registrations one data from mongodb database
-
-    // get registations one data from mongodb database. filter by email
-    // app.get('/registations/:email', async(req, res)=>{
-    //     const email = req.params.email;
-    //     const filter = { email: email.toString()}
-    //     const result = await registationsCollection.findOne(filter)
-    //     res.send(result)
-    // })
-    // get registations one data from mongodb database. filter by email
-    // Assuming you have a MongoDB client initialized (e.g., MongoClient) and a database connection established
-
-    // app.get('/registations/:email', async(req, res)=>{
-    //     const email = req.params.email;
-    //     // if(!email){
-    //     //     res.send([]);
-    //     // };
-    //     const qurey = {userEmail: email};
-    //     const result = registationsCollection.find(qurey).toArray();
-    //     res.send(result)
-    // });
-
-    // Define the collection you want to query
-
-
-
-
-
-
-
-
-
-    // User login Data Post
-
-
-    // User registations data Post
-    // app.post('/registations', async(req, res)=>{
-    //     const user = req.body;
-    //     const result = await registationsCollection.insertOne(user);
-    //     res.send(result)
-    // })
-
-    // User data update (put)
-    // app.put('/users/:id', async(req, res) =>{
-    //     const id = req.params.id
-    //     const user = req.body;
-    //     const filter = {_id: new ObjectId(id)}
-    //     const options = {upsert: true};
-    //     const updateUser = {
-    //         $set:{
-    //             name: user.name,
-    //             dateOfBirth: user.dateOfBirth,
-    //             district: user.district,
-    //             clas: user.clas,
-    //             institute: user.institute,
-    //             category: user.category,
-    //             translationID: user.translationID,
-    //             senderNumber: user.senderNumber,
-    //             receiverNumber: user.receiverNumber,
-    //             refer: user.refer
-    //         }
-    //     };
-    //     const result = await usersCollection.updateOne(filter,updateUser,options);
-    //     res.send(result)
-    // } )
-
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -327,7 +230,11 @@ run().catch(console.dir);
 
 
 
+const exApp = async () => {
+  await client.connect();
+  app.listen(port, (req, res) => {
+    console.log('Server Port number', port);
+  })
+}
 
-app.listen(port, (req, res) => {
-  console.log('Server Port number', port);
-})
+exApp();
